@@ -10,6 +10,7 @@ gem "thin", "~> 1.8"
 
 # Rack middleware. Used specifically for parsing the request body into params.
 # https://github.com/rack/rack-contrib
+
 gem "rack-contrib", "~> 2.3"
 
 # More Rack middleware! Used to handle CORS requests
@@ -34,6 +35,9 @@ gem "sqlite3", "~> 1.4"
 # Require all files in a folder
 gem "require_all", "~> 3.0"
 
+#for the verification of the token
+gem "bcrypt", "~> 3.1.18"
+
 # These gems will only be used when we are running the application locally
 group :development do
   gem "pry", "~> 0.14.1"
@@ -41,6 +45,7 @@ group :development do
   # Automatically reload when there are changes
   # https://github.com/alexch/rerun
   gem "rerun"
+
 end
 
 # These gems will only be used when we are running tests

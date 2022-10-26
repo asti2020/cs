@@ -1,9 +1,23 @@
 
+require './config/environment'
+
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
   
   # Add your routes here
-  
+  post '/login' do
+    user = User.find_by(email: params[:email])
+    if user && user.authenticate(params[:password])
+        session[:user_id] = user.id
+        # redirect to '/user'
+        user.to_json
+    elsif params[:email].empty? || params[:password].empty?
+        "Cont be empty, Please fill in all fields."
+    else
+        redirect to '/login'
+    end
+end
+
   get "/mygames/:id" do
     games = User.find(params[:id]).games
     games.to_json
@@ -15,7 +29,7 @@ class ApplicationController < Sinatra::Base
   end
 
   get "/allgames/:id" do
-    game = allgames.find(params[:id])
+    game = Game.find(params[:id])
     game.to_json
   end
 
@@ -46,7 +60,7 @@ class ApplicationController < Sinatra::Base
   end
 
   delete "/allgames/:id" do
-    game = Game.find(params[:id])
+    game = Game.users.find(params[:id])
     game.destroy
     game.to_json
   end
@@ -56,23 +70,34 @@ class ApplicationController < Sinatra::Base
     matchup.to_json
   end
 
-#    post '/login' do
-#     user = User.find_by(email: params[:email])
-#     if user && user.authenticate(params[:password])
-#         user.to_json
-#     else
-#         {error: "Invalid username or password"}.to_json
-#     end
-# end
 
-  post '/login' do
-      user = User.find_by(email: params[:email])
-      if user && user.authenticate(params[:password])
-          user.to_json
-      else
-          {error: "Invalid username or password"}.to_json
+    configure do
+      set :public_folder, 'public'
+      set :views, 'app/views' 
+      set :sessions, true
+      set :session_secret, ENV['SESSION_SECRET']
+    end 
+    
+    get "/" do
+    puts "Hello World"
+    end 
+  
+    helpers do
+      def logged_in?
+        !!session[:user_id]
       end
-  end
+  
+      def current_user 
+        User.find_by(:id => session[:user_id]) 
+      end 
+  
+      def redirect_if_not_logged_in 
+        if !logged_in? 
+          redirect to '/login' 
+        end  
+      end   
+    
+    end
 
 end
 # class ApplicationController < Sinatra::Base
@@ -122,3 +147,22 @@ end
 #   end
 
 # end
+
+
+#    post '/login' do
+#     user = User.find_by(email: params[:email])
+#     if user && user.authenticate(params[:password])
+#         user.to_json
+#     else
+#         {error: "Invalid username or password"}.to_json
+#     end
+# end
+
+    # post '/login' do
+    #     user = User.find_by(email: params[:email])
+    #     if user && user.authenticate(params[:password])
+    #         user.to_json
+    #     else
+    #         {error: "Invalid username or password"}.to_json
+    #     end
+    # end
