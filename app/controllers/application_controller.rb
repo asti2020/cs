@@ -1,8 +1,6 @@
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
-  
-  # Add your routes here
-  
+    
   get "/mygames/:id" do
     games = User.find(params[:id]).games
     games.to_json
@@ -19,9 +17,14 @@ class ApplicationController < Sinatra::Base
     game.to_json
   end
 
-  get "/users" do
-    users = User.all
-    users.to_json
+  get "/users/:email/:password" do
+    user = User.find_by(email: params[:email], password: params[:password])
+    user.to_json
+  end
+
+  get "/games/:userId" do
+    games = User.find(params[:userId]).games
+    games.to_json
   end
 
   post "/users" do
@@ -43,4 +46,19 @@ class ApplicationController < Sinatra::Base
     matchup = Matchup.create(user_id: params[:user_id], game_id: params[:game_id], side: params[:side])
     matchup.to_json
   end
+
+  get "/users/:username" do
+    user_id = User.find_by(username: params[:username]).id
+    user_id.to_json
+  end
+
+  # post '/login' do
+  #   user = User.find_by(email: params[:email])
+  #   if user && user.authenticate(params[:password])
+  #       user.to_json
+  #   else
+  #       {error: "Invalid username or password"}.to_json
+  #   end
+  # end
+
 end
