@@ -1,3 +1,5 @@
+require './config/environment'
+
 class ApplicationController < Sinatra::Base
   set :default_content_type, 'application/json'
     
@@ -52,13 +54,50 @@ class ApplicationController < Sinatra::Base
     user_id.to_json
   end
 
-  # post '/login' do
-  #   user = User.find_by(email: params[:email])
-  #   if user && user.authenticate(params[:password])
-  #       user.to_json
-  #   else
-  #       {error: "Invalid username or password"}.to_json
-  #   end
-  # end
+  get "/opponent/:game/:user" do
+    game = Game.find(params[:game])
+    # opponent = Game.find(params[:game]).opponent(params[:user])
+    game.opponent(params[:user].to_i).to_json
+
+    # params[:user]
+  end
+
+
+  post '/login' do
+    user = User.find_by(email: params[:email])
+    if user && user.authenticate(params[:password])
+        session[:user_id] = user.id
+        # redirect to '/user'
+        user.to_json
+    elsif params[:email].empty? || params[:password].empty?
+        "A field is empty"
+    else
+        redirect to '/login'
+    end
+  end
+
+
+  configure do
+    set :public_folder, 'public'
+    set :views, 'app/views' 
+    set :sessions, true
+    set :session_secret, ENV['SESSION_SECRET']
+  end 
+
+  helpers do
+    def logged_in?
+      !!session[:user_id]
+    end
+
+    def current_user 
+      User.find_by(:id => session[:user_id]) 
+    end 
+
+    def redirect_if_not_logged_in 
+      if !logged_in? 
+        redirect to '/login' 
+      end  
+    end   
+  end
 
 end
