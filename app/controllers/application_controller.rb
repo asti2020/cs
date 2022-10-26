@@ -29,4 +29,18 @@ class ApplicationController < Sinatra::Base
     user.to_json
   end
 
+  get "/side/:id/:player" do
+    matchup = Matchup.find_by(game_id: params[:id], user_id: params[:player])
+    matchup.to_json
+  end
+
+  post "/allgames" do
+    game = Game.create(position: params[:position])
+    game.to_json
+  end
+
+  post "/matchups" do
+    matchup = Matchup.create(user_id: params[:user_id], game_id: params[:game_id], side: params[:side])
+    matchup.to_json
+  end
 end
