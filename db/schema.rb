@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_26_202026) do
+ActiveRecord::Schema.define(version: 2022_10_27_161013) do
 
   create_table "games", force: :cascade do |t|
     t.string "position"
+    t.integer "ongoing"
   end
 
   create_table "matchups", force: :cascade do |t|

@@ -40,7 +40,7 @@ class ApplicationController < Sinatra::Base
   end
 
   post "/allgames" do
-    game = Game.create(position: params[:position])
+    game = Game.create(position: params[:position], ongoing: 1)
     game.to_json
   end
 
@@ -60,6 +60,11 @@ class ApplicationController < Sinatra::Base
     game.opponent(params[:user].to_i).to_json
 
     # params[:user]
+  end
+
+  patch '/ongoing/' do
+    game = Game.find(params[:id]).update(ongoing: 0)
+    game.to_json
   end
 
 
